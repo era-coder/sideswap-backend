@@ -3,8 +3,20 @@ import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { SwapResolver } from './resolvers/swap'
+import { createConnection } from 'typeorm'
+import { Invoice } from './entities/Invoice'
 
 const main = async (): Promise<void> => {
+  const conn = createConnection({
+    type: 'postgres',
+    database: 'sideswap',
+    username: 'postgres',
+    password: '',
+    logging: false,
+    synchronize: true,
+    entities: [Invoice],
+  })
+
   const app = express()
 
   app.get('/', (_, res) => {
