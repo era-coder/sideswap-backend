@@ -5,9 +5,11 @@ import { buildSchema } from 'type-graphql'
 import { SwapResolver } from './resolvers/swap'
 import { createConnection } from 'typeorm'
 import { Invoice } from './entities/Invoice'
+import { InvoiceResolver } from './resolvers/invoice'
 
 const main = async (): Promise<void> => {
-  const conn = createConnection({
+  //const conn =
+  await createConnection({
     type: 'postgres',
     database: 'sideswap',
     username: 'postgres',
@@ -25,12 +27,13 @@ const main = async (): Promise<void> => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [SwapResolver],
+      resolvers: [SwapResolver, InvoiceResolver],
       validate: false,
     }),
+    // context: ({ req, res }) => ({ req, res }),
   })
 
-  apolloServer.applyMiddleware({ app })
+  apolloServer.applyMiddleware({ app, cors: true })
 
   app.listen(4000, () => {
     console.log('server started on localhost:4000')
