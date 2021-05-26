@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import 'dotenv-safe/config'
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
@@ -11,11 +12,11 @@ const main = async (): Promise<void> => {
   //const conn =
   await createConnection({
     type: 'postgres',
-    database: 'sideswap',
-    username: 'postgres',
-    password: '',
-    logging: false,
-    synchronize: true,
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    logging: process.env.DB_LOGGING === 'true' ? true : false,
+    synchronize: process.env.DB_SYNC === 'true' ? true : false,
     entities: [Invoice],
   })
 

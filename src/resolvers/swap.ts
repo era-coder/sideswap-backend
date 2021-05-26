@@ -1,8 +1,6 @@
+import 'dotenv-safe/config'
 import { Resolver, Arg, Query } from 'type-graphql'
 import axios from 'axios'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 const USER = process.env.RPC_USER
 const PASS = process.env.RPC_PASSWORD
