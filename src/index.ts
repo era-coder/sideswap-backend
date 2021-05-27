@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import 'dotenv-safe/config'
 import express from 'express'
+import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { SwapResolver } from './resolvers/swap'
@@ -22,6 +23,13 @@ const main = async (): Promise<void> => {
 
   const app = express()
 
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  )
+
   app.get('/', (_, res) => {
     res.json({ msg: 'backend works' })
   })
@@ -36,7 +44,7 @@ const main = async (): Promise<void> => {
     }),
   })
 
-  apolloServer.applyMiddleware({ app, cors: true })
+  apolloServer.applyMiddleware({ app, cors: false })
 
   app.listen(4000, () => {
     console.log('server started on localhost:4000')

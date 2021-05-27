@@ -9,5 +9,6 @@ declare namespace NodeJS {
     DB_PASSWORD: string
     DB_LOGGING: string
     DB_SYNC: string
+    CORS_ORIGIN: string
   }
 }
