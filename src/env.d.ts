@@ -3,6 +3,7 @@ declare namespace NodeJS {
     RPC_USER: string
     RPC_PASSWORD: string
     RPC_IP: string
+    RPC_MIN_CONF: string
     DB_NAME: string
     DB_USER: string
     DB_PASSWORD: string
