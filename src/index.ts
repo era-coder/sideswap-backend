@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import 'dotenv-safe/config'
 import express from 'express'
+import { schedule } from 'node-cron'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { SwapResolver } from './resolvers/swap'
@@ -9,8 +10,7 @@ import { Invoice } from './entities/Invoice'
 import { InvoiceResolver } from './resolvers/invoice'
 
 const main = async (): Promise<void> => {
-  //const conn =
-  await createConnection({
+  const conn = await createConnection({
     type: 'postgres',
     database: process.env.DB_NAME,
     username: process.env.DB_USER,
@@ -26,12 +26,34 @@ const main = async (): Promise<void> => {
     res.json({ msg: 'backend works' })
   })
 
+  // check balances every 30 sec
+  schedule('*/30 * * * * *', async () => {
+    console.log('running a task every 30 seconds')
+    const unpaidInvoices = await Invoice.find({
+      where: { hasDeposited: false },
+    })
+    unpaidInvoices.forEach((invoice) => {
+      console.log(`checking balance for ${invoice.depositAddress}`)
+      // TODO balance = RPC get balance (invoice.depositAddress)
+      // if balance > 0.1
+      console.log(
+        `sending tx to ${invoice.receiveAddress} on ${invoice.receiveChain}`
+      )
+      // TODO send tx to invoice.receiveAddress
+      conn
+        .createQueryBuilder()
+        .update(Invoice)
+        .set({ hasDeposited: true })
+        .where('id = :id', { id: invoice.id })
+        .execute()
+    })
+  })
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [SwapResolver, InvoiceResolver],
       validate: false,
     }),
-    // context: ({ req, res }) => ({ req, res }),
   })
 
   apolloServer.applyMiddleware({ app, cors: true })
