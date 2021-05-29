@@ -4,10 +4,10 @@ import express from 'express'
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
-import { SwapResolver } from './resolvers/swap'
 import { createConnection } from 'typeorm'
-import { Invoice } from './entities/Invoice'
+import { AddressResolver } from './resolvers/address'
 import { InvoiceResolver } from './resolvers/invoice'
+import { Invoice } from './entities/Invoice'
 import { checkInvoices } from './cron'
 
 const main = async (): Promise<void> => {
@@ -39,7 +39,7 @@ const main = async (): Promise<void> => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [SwapResolver, InvoiceResolver],
+      resolvers: [AddressResolver, InvoiceResolver],
       validate: false,
     }),
   })
